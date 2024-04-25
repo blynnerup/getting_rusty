@@ -83,3 +83,6 @@ fun main() {
   let meme = make_image(meme);
 }
 ~~~
+
+## Memory Safety
+Rust ensures memory safety at compile time.
