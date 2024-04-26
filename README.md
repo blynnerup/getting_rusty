@@ -245,3 +245,100 @@ let buffs: [u8; 3] = [1, 2, 3];
 ~~~
 
 Indexing is done by using square brackets. Arrays are limited to 32 elements, after which they lose some of their functionality. Instead Vectors can be used.
+
+## Control Flow
+
+### If Expression
+In Rust, if is a expression not a statement. Statements don't return values, expressions do. 
+Consider the following
+~~~
+if num == 5 {
+  msg = "five";
+} else if num == 4 {
+  msg = "four";
+} else {
+  msg = "other";
+}
+
+// The above can be rewritten into the following because of if being an expression
+msg = if num == 5 {
+  "five"
+} else if num == 4 {
+  "four"
+} else {
+  "other"
+}
+~~~
+
+### Unconditional loop
+If the compiler knows the loop is unconditional, you can have some nice control features.
+
+Consider the following
+~~~
+// The simple loop, end with break
+loop {
+  break;
+}
+
+// In case you want to break out of a nested loop, you can label the loop and once the loop hits the break it will break out of that loop
+// A label is annotated with a single quote
+'outer: loop {
+  loop {
+    loop {
+      break 'outer; // This breaks out of the 'outer loop
+    }
+  }
+}
+
+// Continue by itself continues the current loop, but can also be applied with a label
+'best: loop{
+  loop {
+    continue 'best;
+  }
+}
+
+// The while loop operates in the same way
+while running() {
+  // do stuff
+  // breaks when the expression wequals true
+}
+
+// do while constructs does not exist in Rust, but can manually be implemented
+
+// for loop
+for num in [1, 2, 3, 4].iter() {
+  // do stuff with num
+}
+
+// for loop can take a pattern and destructure the items it receives and bind the inside parts to variables
+let array = [(1, 2), (3, 4)];
+
+for (x, y) in array.iter() {
+  //do stuff with x and y
+}
+
+// loops can work with ranges, which are marked with two dots
+// The start is inclusive and the end is exclusive
+for num in 0..50 {
+  // do stuff with num (0 - 49)
+}
+
+// An equal sign can be used to make the last in the range inclusive
+for num in 0..=50 {
+  // do stuff with num (0-50)
+}
+~~~
+
+## Strings
+In the Rust standard library there are six different types of Strings, however two are most commenly used.
+
+str is a string slice and will often be seen as &str which is the _borrowed string slice_. A litteral string is always a borrowed string slice. A borrowed string slice &str is often refered to as a string. This can be confusing as the other commonly used string type is String. The biggest difference between the two is that the data in a borrowed string slice cannot be modified, whereas the String data can. A borrowed string slice is internally made up of a pointer to some bytes and a length. A String is made up of a pointer to some bytes, a length and a capacity, that may be higher than what is currently being used. In other words a borrowed string slice is a subset of a String in multiple ways. Both are valid UTF-8. Strings cannot be indexed by char position.
+
+
+## Ownership
+Ownership is a unique feature in Rust, enabling memory safety while still being a systems programming language.
+There are three rules to ownership;
+
+1. Each value has an owner. There is no value or data in memory that does not have a variable that owns it.
+2. There is only one owner of a value. There is no shared ownership. Other variables may borrow a value.
+3. When the owner goes out of scope, the value gets dropped immediately.
