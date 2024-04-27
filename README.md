@@ -342,3 +342,11 @@ There are three rules to ownership;
 1. Each value has an owner. There is no value or data in memory that does not have a variable that owns it.
 2. There is only one owner of a value. There is no shared ownership. Other variables may borrow a value.
 3. When the owner goes out of scope, the value gets dropped immediately.
+
+In order to understand how ownership of a value can change, consider the following:
+
+~~~
+let s1 = String::from("abc");
+let s2 = s1;
+
+println!("{}", s1); // This results in an error
