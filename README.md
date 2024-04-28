@@ -478,3 +478,53 @@ You can have either;
 1. Exactly one mutable reference to a value
 2. Any number of immutable references
 
+
+## Structs
+As Rust follows many of the paradigms, Rust doesn't have classes, but structs.
+A Struct can have data fields, methods and associated functions. The syntax and implementation of a struct is as follows:
+
+~~~
+struct RedFox { // name of a struct is in captial camel case.
+  enemy: bool,
+  life: u8,
+}
+
+// The verbose implementation
+let fox = RedFox {
+  enemy: true,
+  life: 70,
+}
+
+// Typically a struct would have an associated function, that can be implemented as a constructor. This has assigned default values, and then call that.
+// Methods in an associated function is defined in an impl block. This is seperate from the struct definition.
+// First is the keyword impl (implement) followed by the name of the struct you wish to implement.
+// The new() is an associated function, as it doesn't have a form of Self as its first parameter. The new name is optional, but often used to imply constructor like method.
+impl RedFox { // implement RedFox struct
+  fn new() -> Self { // Self can be replaced with the name of the struct (RedFox in this case)
+    Self {
+      enemy: true,
+      life: 70,
+    }
+  }
+}
+
+// In order to create a new RedFox, this is how
+
+let fox = RedFox::new();
+~~~~
+
+The scope operator in Rust is double colon (::), it is used to access part of namespace like things. It has been used before to access items inside modules.
+Once you have an instance, use dot syntax like in other languages `fox.life`. Other methods are also defined in the implementation block. They always take some form of self as their first argument.
+
+~~~
+impl RedFox {
+  // associated function
+  fn funtion() ...
+  // methods
+  fn move(self) ...
+  fn borrow(&self) ...
+  fn mut_borrow(&mut self) ...
+}
+~~~
+
+In Rust there is no inheritance. Not even for structs. Instead Rust have _traits_.
