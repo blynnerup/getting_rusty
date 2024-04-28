@@ -1,5 +1,6 @@
 fn main() {
    mutable_reference();
+    test_unwrap();
 }
 
 fn mutable_reference() {
@@ -11,4 +12,10 @@ fn mutable_reference() {
 fn do_stuff_to_mut(s: &mut String) {
     s.insert_str(0, "Hi, ");
     *s = String::from("Replacement");
+}
+
+fn test_unwrap () {
+    let k = 10;
+    assert_eq!(Some(4).unwrap_or_else(|| 2 * k), 4, "Test {}", k);
+    assert_eq!(None.unwrap_or_else(|| 2 * k), 20);
 }

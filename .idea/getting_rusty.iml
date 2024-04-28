@@ -5,9 +5,11 @@
       <sourceFolder url="file://$MODULE_DIR$/exercise_d/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/variables/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/sandbox/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/exercise_e/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/exercise_d/target" />
       <excludeFolder url="file://$MODULE_DIR$/variables/target" />
       <excludeFolder url="file://$MODULE_DIR$/sandbox/target" />
+      <excludeFolder url="file://$MODULE_DIR$/exercise_e/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
