@@ -527,4 +527,70 @@ impl RedFox {
 }
 ~~~
 
-In Rust there is no inheritance. Not even for structs. Instead Rust have _traits_.
+In Rust there is no inheritance for structs. Instead, Rust have _traits_.
+
+## Traits
+Traits works like interfaces in other languages. Rust takes the composition over inheritance approach. 
+
+Traits define required behaviour. In other words, functions and methods that a struct must implement if it wants to have that trait.
+
+~~~
+struct RedFox {
+  enemey: bool,
+  life: u32,
+}
+
+trait Noisy {
+  fn get_noise(&self) -> &str;
+}
+
+impl Noisy for RedFox { // Implement Noisy for RedFox
+  fn get_noise(&self) -> &str { "Meow?" } // The implementation then returns "Meow?"
+}
+~~~
+
+The method could of course have been implemented directly onto the struct, but when implementing _traits_ we get the added bonus of being able to write generic functions that accepts any value that implements that trait.
+
+For instance we could make a function that would accept an item of type T, which is defined to be anything that implements the Noisy trait.
+The function can then use any behaviour on item that the Noisy trait defines.
+`fn print_noise<T: Noisy>(item: T) { println!("{}", item.get_noise());`
+
+Traits can be defined on any struct in the project, including built-ins or types from imported packages. And on your structs you can implement any trait from any package or built-in
+~~~
+// Here we implement the Noisy trait for the u8 built in type (byte)
+fn print_noise<T: Noisy>(item: T) { println!("{}", item.get_noise());
+
+impl Noisy for u8 {
+  fn get_noise(&self) -> &str { "BYTE!" }
+}
+
+fn main() {
+  print_noise(5_u8); // prints "BYTE!"
+}
+~~~
+
+Traits can inherit from other traits. A struct implementing a trait with inheritance must also implement the trait methods from the parent traits.
+Also traits can have default behaviors, so if design of traits are done carefully, you may not have to implement some of that trait at all.
+
+~~~
+trait Run {
+  fn run(&self) { // Instead of ending the defintion with a semicolon, make a block ...
+    println!("I'm running!"); // .. and implment default behaviour here.
+  }
+}
+
+// Once implementing the trait, just dont provide a new definition for the method you want to implement
+// the precense of an implementation will override the default.
+
+struct Robot {}
+impl Run for Robot {}
+
+// In order to make the Robot run, we can instantiate in the main method
+
+fn main() {
+  let robot = Robot {};
+  robot.run();
+}
+~~~
+
+There cannot be set Fields in traits. The way around this is to implement getter and setter methods in the traits.

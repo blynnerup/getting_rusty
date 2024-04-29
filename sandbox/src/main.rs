@@ -1,6 +1,9 @@
 fn main() {
    mutable_reference();
     test_unwrap();
+    
+    let robot = Robot {};
+    robot.run();
 }
 
 fn mutable_reference() {
@@ -19,3 +22,15 @@ fn test_unwrap () {
     assert_eq!(Some(4).unwrap_or_else(|| 2 * k), 4, "Test {}", k);
     assert_eq!(None.unwrap_or_else(|| 2 * k), 20);
 }
+
+trait Run {
+    fn run(&self) {
+        println!("I'm running!");
+    }
+}
+
+struct Robot {}
+
+impl Run for Robot {}
+
+
