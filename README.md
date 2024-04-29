@@ -594,3 +594,45 @@ fn main() {
 ~~~
 
 There cannot be set Fields in traits. The way around this is to implement getter and setter methods in the traits.
+
+
+## Collections
+A rundown of some collections in the standard library.
+
+### Vector - Vec\<T>
+Vectors is a generic collection that holds elements of one type, and is instead of arrays and lists from other languages.
+Much like in C# creation of a vector is done by specifying the type the vector will store in angle brackets.
+
+`let mut v: Vec<i32> = Vec::new();`
+
+Once the vector is created, using push and pop methods will add and remove items from the vector and return it.
+~~~
+let mut v: Vec<i32> = Vec::new();
+
+v.push(2);
+v.push(4);
+v.push(6);
+let x = v.pop(); // x is 6
+~~~
+
+As vectors store objects of known size next to each other in memory you can index into it.
+
+`println!("{}", v[1]); // prints "4"`
+
+If you index out of bounds Rust will panic.
+Vectors can be created from literals by using the macro _vec!_
+
+`let mut v = vec![2, 4, 6];`
+
+### HashMap - HashMap<K, V>
+The _HashMap_ is a generic collection where you specify a type for the key, and one for the value and can index into the hashmap values by looking up the key.
+This is a Dictionary in C#.
+Creating a hashmap is done like so
+~~~
+let mut h: HashMap<u8, bool> = HashMap::new();
+
+h.insert(5, true);
+let have_five = h.remove(&5).unwrap();
+~~~
+Creating new pairs into the hashmap id done by the insert method. Removing from the hashmap is done by the remove method, which returns an enum called _Option_.
+
