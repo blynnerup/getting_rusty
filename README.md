@@ -1,6 +1,7 @@
 # getting_rusty
 Learning the basics of Rust.
 This is a helpme guide, used to reference things in the future.
+The guide is based on the course: https://www.udemy.com/course/ultimate-rust-crash-course/ and other information I discovered while learning.
 
 ## Basics
 Cargo is the bread and butter. It handles your packages, your build and testing… everything is cargo.
@@ -788,5 +789,62 @@ fn file_open4() {
 }
 ~~~
 
+## Closure
+A closure is an anonymous function that can borrow or capture some data from the scope it is nested in. The syntax is a parameter list between two pipes without type annotations, followed by a block.
+This creates an anonymous function called closure that can be called later.
+The types of the arguments and the return value are all inferred from how you use the arguments and what you return.
 
+~~~
+// Abstract implementation of a Closure
+| x, y | { x + y }
+
+// Implementation
+let add = | x, y | { x + y };
+
+// Call the closure
+add(1,2); // returns 3
+~~~
+
+You don't need any parameters for a closure, and can even leave the block empty, but that provides little of interest.\
+The closure will borrow a reference to the values in the enclosing scope.\
+As the closure only borrows the reference to a valuable as long as they're in scope, the closure will normally not outlive the variable.
+However, it is possible to let the closure take ownership of the variable by using the _move_ command, by moving them into itself.\
+~~~
+let s = "I'm being moved!";
+let f = move || {
+  println!("{}", s);
+};
+
+f();
+~~~
+This allows the closure to be sent over to another thread or whatever we what with it, now that it no longer is borrowing a reference to a variable, but is totally self enclosed.
+Closures allow for neat methods on elements.
+~~~
+let mut v = vec![2, 4, 6];
+
+v.iter() // Creates an iterator for the closure
+  .map(|x| x * 3) // Multiplies every element in the vector with 3
+  .filter(|x| *x > 10) // Removes any item that is greater than 10
+  .fold(0, |acc, x| acc + x); // Add the values of the remaining items together
+~~~
+
+## Threads
+In order to do threading in Rust, we must use the std::thread module. After that we can spawn a new thread and let that do work while the rest of the program continues.
+Also consider when to use threads and when to use async, whichever yields the best performance for the required task. A thread::spawn takes a closure as an argument.
+~~~
+use std::thread;
+
+fn main() {
+  let handle = thread::spawn(move || { // thread.spwn takes a close with no arguments - this closure is executed as the main function of the thread, other functions or other work can then be called from here.
+    // Do stuff in a child thread
+  });
+  
+  // Do other stuff in the main thread simultaneously
+  
+  // Wait untill thread has exited
+  handle.join().unwrap(); // spawn returns a join handle, which pauses the current thread, untill the joining thread has completed and exited.
+}
+~~~
+As the _Result_ from the thread closing can be either a Ok result or an error in case the thread panicked, we need to unwrap this and handle whatever situation the thread produced.
+As switching threads is heavy in computational terms, it is advised to consider if threading is needed, or you would be better off using an async pattern.
 

@@ -1,11 +1,11 @@
-use std::fs::File;
-
 fn main() {
    mutable_reference();
     test_unwrap();
     
     let robot = Robot {};
     robot.run();
+    
+    closure_and_operations();
 }
 
 fn mutable_reference() {
@@ -36,8 +36,18 @@ struct Robot {}
 impl Run for Robot {}
 
 // Example of using Result
-fn load_file() {
-    File::open("Text for phone.txt");
+// fn load_file() {
+//     File::open("Text for phone.txt");
+// }
+
+// Example of closure
+fn closure_and_operations() {
+    let v = vec![2, 4, 6];
+    
+    v.iter()
+        .map(|x| x * 3)
+        .filter(|x| *x > 10)
+        .fold(0, |acc, x| acc + x);
 }
 
 
