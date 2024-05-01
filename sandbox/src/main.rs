@@ -1,3 +1,5 @@
+use std::fs::File;
+
 fn main() {
    mutable_reference();
     test_unwrap();
@@ -32,5 +34,10 @@ trait Run {
 struct Robot {}
 
 impl Run for Robot {}
+
+// Example of using Result
+fn load_file() {
+    File::open("Text for phone.txt");
+}
 
 

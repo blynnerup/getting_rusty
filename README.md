@@ -636,3 +636,157 @@ let have_five = h.remove(&5).unwrap();
 ~~~
 Creating new pairs into the hashmap id done by the insert method. Removing from the hashmap is done by the remove method, which returns an enum called _Option_.
 
+## Enums
+An enum is like an enum in C#
+
+~~~
+enum Colour {
+  Red,
+  Green,
+  Blue,
+}
+
+let red = Color::Red;
+~~~
+In Rust it is possible to associate data and methods with the variants. It is possible for enum named variants to have a many different types;
+- No data
+- Single type of data
+- Tuple of data
+- Anonymous struct of data
+
+Enums can be used with generics and can implement functions and methods.
+~~~
+enum DispernserItem {
+  Empty,
+  Ammo(u8),
+  Things(String, i32),
+  Place {x: i32, y: i32},
+}
+
+impl DispernserItem {
+  fn display(&self) { }
+}
+
+// This is an enum in the standard library that will be used often.
+enum Option<T> {
+  Some(T),
+  None,
+}
+~~~
+
+Unlike in C# there is no _null_ value, so use an Option instead. You either have a value wrapped in the Some variant or you have _none_.
+If you want to check for a single variant, you use the _if let_ expression, this is because enums can represent all sorts of data, therefore you need to use pattern matching.
+~~~
+if let Some(x) = my_variable {
+  println!("value is {}", x);
+}
+~~~
+In case you watch to match for all the variants use _match_.
+
+~~~
+match my_variable {
+  Some(x) => {
+    println1!("value is {}", x);
+  },
+  None => {
+    println!("no value");
+    },
+}
+~~~
+The match expression requires that all possible match are covered, so the expression must be exhaustive. The underscore can be used for anything, so it can be used for a default or an any-else branch.
+The match expression can check for all kinds of types, but all arms of the match must return the same type.
+
+~~~
+let x  = match my_variable { // my_variable must be a variable that supports enums
+  Some(x) => x.squared() + 1,
+  None => 42,
+};
+~~~
+If the return value isn't needed, you can leave out the semicolon after the final bracket. If you do use the return value, the semicolon must be there.
+
+### Option
+Option is used whenever something may be absent. A value can be checked if is _some_ or _none_ by using the dot operator `.is_some` or `.is_none`.
+Option implements the IntoIterator trait, so it can be treated like a vector of 0 or 1 items. 
+
+### Result
+Result is used might have a useful result or might have an error.
+The implementation of Result looks like this:
+~~~
+#[must_use]
+enum Result<T, E> {
+  Ok(T),
+  Err(E),
+}
+~~~
+Both Ok and Err are wrapped by generics, but are independent of each other. The must_use annotation makes it a compiler warning to silently drop a result.
+Rust encourages to handle all possible errors and will throw a warning if a Result is being dropped without handle.
+
+~~~
+fn load_file() {
+    File::open("Text for phone.txt");
+}
+
+// Running this produces the following warnings
+warning: function `load_file` is never used                                                                                                                                                                                                                                                                     
+  --> src\main.rs:39:4
+   |
+39 | fn load_file() {
+   |    ^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: unused `Result` that must be used                                                                                                                                                                                                                                                                      
+  --> src\main.rs:40:5
+   |
+40 |     File::open("Text for phone.txt");
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: this `Result` may be an `Err` variant, which should be handled
+   = note: `#[warn(unused_must_use)]` on by default
+help: use `let _ = ...` to ignore the resulting value
+   |
+40 |     let _ = File::open("Text for phone.txt");
+   |     +++++++
+
+warning: `sandbox` (bin "sandbox") generated 2 warnings                                                                                                                                                                                                                                                         
+    Finished dev [unoptimized + debuginfo] target(s) in 1.85s
+     Running `target\debug\sandbox.exe`
+
+~~~
+
+In the above example we get a warning as the file open operation might throw an error, and we should handle that situation.
+So in order to get rid of the warning, lets consume the Result and produce some output it.
+
+~~~
+// This will provide a file struct if the result is Ok, otherwise it will crash.
+fn file_open() {
+  let res = File::open("foo");
+  let f =  res.unwrap(); 
+}
+
+// This will do the same as above, but in case of a crash it will also print the content of the expect ()
+fn file_open2() {
+  let res = File::open("foo");
+  let f = res.expect("error message");
+}
+
+// This prevents the crash by first checking if the Result is ok
+fn file_open3() {
+  let res = File::open("foo");
+  if res.is_ok() {
+    let f = res.unwrap();
+  }
+}
+
+// Opening file by pattern matching
+fn file_open4() {
+  let res = File::open("foo");
+  match res {
+    Ok(f) => { /* do stuff with the file struct */ }
+    Err(e) => { /* do stuff if the file open fails and produces an error */ }
+  }
+}
+~~~
+
+
+
