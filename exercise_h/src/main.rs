@@ -118,8 +118,10 @@ fn main() {
         }
     });
     
+    // Close the channel so that the receiving end will break their loops and end.
     drop(tx);
     
+    // Join child threads for good hygiene
     handle_x.join().unwrap();
     handle_z.join().unwrap();
     
