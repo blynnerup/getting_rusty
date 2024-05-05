@@ -2,6 +2,7 @@
 Learning the basics of Rust.
 This is a helpme guide, used to reference things in the future.
 The guide is based on the course: https://www.udemy.com/course/ultimate-rust-crash-course/ and other information I discovered while learning.
+Added another project to this one, where I follow along to https://www.udemy.com/course/rust-programming-the-complete-guide/
 
 ## Basics
 Cargo is the bread and butter. It handles your packages, your build and testingâ€¦ everything is cargo.
@@ -10,7 +11,7 @@ Cargo is the bread and butter. It handles your packages, your build and testingâ
 $ cargo new hello
 - Creates a new Rust project called 'hello'
 - Creates the Cargo.toml file which is the configuration file
-- Creates a sub directory called src which contains the main.rs file which is the main file for running the project.
+- Creates a subdirectory called src which contains the main.rs file which is the main file for running the project.
 - The file contains a single function that prints 'hello world!'
 
 In order to run it call the following in the project directory:
@@ -49,7 +50,7 @@ The const keyword is even more immutable. It requires the following;
 `const WARP_FACTOR: f64 = 9.9;`
 
 The reasons behind this is to be able to use a const outside function at module scope and use it anywhere, it is global and immutable.
-Const values are inlined at compile time, they're really fast.
+Const's values are inlined at compile time, they're really fast.
 
 ### Scope
 Variables are scoped. Meaning they begin where they're created and extends to the end of the block in which they're created. Including nested blocks.
@@ -87,7 +88,10 @@ fun main() {
 ~~~
 
 ## Memory Safety
-Rust ensures memory safety at compile time.
+Rust ensures memory safety at compile time. It does this through the borrow system.
+This strikes a happy medium between garbage collection and memory access and control. You retain freedom to allocate memory, but Rust will deal with freeing memory.
+More on this in the Ownership section
+
 
 ## Functions
 The Rust style guide says to use snake case for function names.
@@ -100,7 +104,7 @@ Function parameters are specified by name: type and seperated by comma.
 
 The return type is specified by an "arrow" ->
 
-Using the return keyword for the return value. The return value can be shorthanded by omitting the return keyword and semi colon from the last statement in the block, and the compiler will use this as return value, this is also called the tail expression.
+Using the return keyword for the return value. The return value can be shorthanded by omitting the return keyword and semicolon from the last statement in the block, and the compiler will use this as return value, this is also called the tail expression.
 
 ~~~
 fun do_stuff(qty: f64, litres: f64) -> f64 {
@@ -163,29 +167,29 @@ There are four scalar types in Rust
 There are many integer types;
 
 | Unsigned | Signed |
-| -------- | ------ |
-|   u8     | i8    |
-| u16 | i16 |
-| u32 | i32 |
-| u64 | i64 |
-| u128 | i128 |
-| usize | isize |
+|----------|--------|
+| u8       | i8     |
+| u16      | i16    |
+| u32      | i32    |
+| u64      | i64    |
+| u128     | i128   |
+| usize    | isize  |
 
-The u- and isize has the size of the platforms integer bits and can be used to access memory. If you don't initialize a integer, it will default to i32, as this is the fastest. The integer types may not be universally supported, it depends on system architechture.
+The u- and isize has the size of the platforms integer bits and can be used to access memory. If you don't initialize an integer, it will default to i32, as this is the fastest. The integer types may not be universally supported, it depends on system architecture.
 
-### Integer Litterals
-| Type | Specification |
-| ---- | ---- |
-| Decimal | 10000 |
-| Hex | 0xdeadbeef |
-| Octal | 0o71234232 |
-| Binary | 0b 11100110 |
-| Byte (u8 only) | b'A' | 
+### Integer Literals
+| Type           | Specification |
+|----------------|---------------|
+| Decimal        | 10000         |
+| Hex            | 0xdeadbeef    |
+| Octal          | 0o71234232    |
+| Binary         | 0b 11100110   |
+| Byte (u8 only) | b'A'          | 
 
-A feature in Rust is that underscores can be added inside or at the end of a integer to ease readability. For instance 1_000_000 reads as 1000000 when compiling or could be done like so 1_0_0_0_0_0_0_.
+A feature in Rust is that underscores can be added inside or at the end of an integer to ease readability. For instance 1_000_000 reads as 1000000 when compiling or could be done like so 1_0_0_0_0_0_0_.
 
 ### Floats
-Float comes as f32 and f64, with 32 and 64 bits of precision respectively. The default value for floats are f64. These can however be really slow on less than 64 bit architecture, so chosing the right size matters.
+Float comes as f32 and f64, with 32 and 64 bits of precision respectively. The default value for floats are f64. These can however be really slow on less than 64 bit architecture, so choosing the right size matters.
 
 ### Floating point Literals
 Follows the IEEE-754 standard, looks like this 3.14159. No special annotation of float is required.
@@ -204,7 +208,7 @@ This can be useful when passing on values to a generic function which accepts mu
 
 ### Booleans
 The type is specified as _bool_
-Booleans are not integers, but can be casted as such.
+Booleans are not integers, but can be cast as such.
 
 ~~~
 true as u8
@@ -245,7 +249,7 @@ let nums = [0; 3]; // Creates an array with 3 0s [Value; How Many]
 let buffs: [u8; 3] = [1, 2, 3];
 ~~~
 
-Indexing is done by using square brackets. Arrays are limited to 32 elements, after which they lose some of their functionality. Instead Vectors can be used.
+Indexing is done by using square brackets. Arrays are limited to 32 elements, after which they lose some of their functionality. Instead, Vectors can be used.
 
 ## Control Flow
 
@@ -333,10 +337,10 @@ for num in 0..=50 {
 ## Strings
 In the Rust standard library there are six different types of Strings, however two are most commonly used.
 
-str is a string slice and will often be seen as &str which is the _borrowed string slice_. A literal string is always a borrowed string slice. A borrowed string slice &str is often refered to as a string. This can be confusing as the other commonly used string type is String. The biggest difference between the two is that the data in a borrowed string slice cannot be modified, whereas the String data can. A borrowed string slice is internally made up of a pointer to some bytes and a length. A String is made up of a pointer to some bytes, a length and a capacity, that may be higher than what is currently being used. In other words a borrowed string slice is a subset of a String in multiple ways. Both are valid UTF-8. Strings cannot be indexed by char position.
+str is a string slice and will often be seen as &str which is the _borrowed string slice_. A literal string is always a borrowed string slice. A borrowed string slice &str is often referred to as a string. This can be confusing as the other commonly used string type is String. The biggest difference between the two is that the data in a borrowed string slice cannot be modified, whereas the String data can. A borrowed string slice is internally made up of a pointer to some bytes and a length. A String is made up of a pointer to some bytes, a length and a capacity, that may be higher than what is currently being used. In other words a borrowed string slice is a subset of a String in multiple ways. Both are valid UTF-8. Strings cannot be indexed by char position.
 
 
-## Ownership
+## <a id="ownership"></a> Ownership
 Ownership is a unique feature in Rust, enabling memory safety while still being a systems programming language.
 There are three rules to ownership;
 
@@ -428,7 +432,7 @@ Rust also makes sure that these pointers are always valid using a concept called
 _Lifetimes_ can be summed up as a rule stating that references must always be valid. This means that the compiler will not allow a value to outlive the reference to it.
 And you can never point to _null_.
 
-References default to a immutable value. However if we make a mutable reference to a mutable value, then we can use the reference to change the value as well.
+References default to an immutable value. However, if we make a mutable reference to a mutable value, then we can use the reference to change the value as well.
 
 ~~~
 let mut s1 = String::from("abc"); // s1 created as mutable
@@ -552,7 +556,7 @@ impl Noisy for RedFox { // Implement Noisy for RedFox
 
 The method could of course have been implemented directly onto the struct, but when implementing _traits_ we get the added bonus of being able to write generic functions that accepts any value that implements that trait.
 
-For instance we could make a function that would accept an item of type T, which is defined to be anything that implements the Noisy trait.
+For instance, we could make a function that would accept an item of type T, which is defined to be anything that implements the Noisy trait.
 The function can then use any behaviour on item that the Noisy trait defines.
 `fn print_noise<T: Noisy>(item: T) { println!("{}", item.get_noise());`
 
@@ -571,7 +575,7 @@ fn main() {
 ~~~
 
 Traits can inherit from other traits. A struct implementing a trait with inheritance must also implement the trait methods from the parent traits.
-Also traits can have default behaviors, so if design of traits are done carefully, you may not have to implement some of that trait at all.
+Also, traits can have default behaviors, so if design of traits are done carefully, you may not have to implement some of that trait at all.
 
 ~~~
 trait Run {
@@ -649,7 +653,7 @@ enum Colour {
 
 let red = Color::Red;
 ~~~
-In Rust it is possible to associate data and methods with the variants. It is possible for enum named variants to have a many different types;
+In Rust, it is possible to associate data and methods with the variants. It is possible for enum named variants to have a many different types;
 - No data
 - Single type of data
 - Tuple of data
@@ -845,6 +849,14 @@ fn main() {
   handle.join().unwrap(); // spawn returns a join handle, which pauses the current thread, untill the joining thread has completed and exited.
 }
 ~~~
-As the _Result_ from the thread closing can be either a Ok result or an error in case the thread panicked, we need to unwrap this and handle whatever situation the thread produced.
+As the _Result_ from the thread closing can be either an Ok result or an error in case the thread panicked, we need to unwrap this and handle whatever situation the thread produced.
 As switching threads is heavy in computational terms, it is advised to consider if threading is needed, or you would be better off using an async pattern.
 
+### Printing collections
+When having to print the contents of an element which is a collection the println! needs some help in order to be able to print that collection.
+We need to use a special operator in the println! macro in order to let the compiler go into debug mode and then also tell it to push elements of the collection onto the print.
+For instance printing a vector would look like this
+~~~
+let nums = vec![1, 2, 3];  // Initialize a vector using the macro and litterals
+println!("{:?}", nums); // The ? tells the compiler to go into debug mode and the : pushes the items in the collection into the print statement, allowing us to print the contents of the vector
+~~~
