@@ -342,11 +342,14 @@ str is a string slice and will often be seen as &str which is the _borrowed stri
 
 ## <a id="ownership"></a> Ownership
 Ownership is a unique feature in Rust, enabling memory safety while still being a systems programming language.
+The Rust compiler is going to verify that your program is free of memory safety errors, such as dangling pointers, double freeze, using uninitialized memory.
+This concept is what drives the Rust language, as it sought to eliminate some of the pitfalls of languages like c++, where memory handling sometimes becomes cause for runtime errors.
+
 There are three rules to ownership;
 
 1. Each value has an owner. There is no value or data in memory that does not have a variable that owns it.
 2. There is only one owner of a value. There is no shared ownership. Other variables may borrow a value.
-3. When the owner goes out of scope, the value gets dropped immediately.
+3. When the owner goes out of scope, the value gets dropped immediately (freeing of memory).
 
 In order to understand how ownership of a value can change, consider the following:
 
