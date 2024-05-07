@@ -1,6 +1,5 @@
-workspace = { members = ["basics", "exercise_basics", "exercise_ownership", "exercise_structs_lifetimes", "sandbox"] }
 [package]
-name = "even_more_rusty"
+name = "sandbox"
 version = "0.1.0"
 edition = "2021"
 

@@ -5,14 +5,23 @@
       <sourceFolder url="file://$MODULE_DIR$/variables/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/sandbox/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/invaders/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/basics/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/exercise_basics/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/exercise_ownership/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/sandbox/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust_basics/exercise_A/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust_basics/exercise_d/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust_basics/exercise_e/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust_basics/exercise_f/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust_basics/exercise_g/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust_basics/exercise_h/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/exercise_structs_lifetimes/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/variables/target" />
       <excludeFolder url="file://$MODULE_DIR$/sandbox/target" />
       <excludeFolder url="file://$MODULE_DIR$/invaders/target" />
+      <excludeFolder url="file://$MODULE_DIR$/even_more_rusty/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust_basics/exercise_A/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust_basics/exercise_d/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust_basics/exercise_e/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust_basics/exercise_f/target" />
