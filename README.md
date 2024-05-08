@@ -735,7 +735,8 @@ let have_five = h.remove(&5).unwrap();
 Creating new pairs into the hashmap id done by the insert method. Removing from the hashmap is done by the remove method, which returns an enum called _Option_.
 
 ## Enums
-An enum is like an enum in C#
+Enum is short for enumeration, allows you to define a type by enumerating its possible variants.
+An enum is like an enum in C#, and created as such
 
 ~~~
 enum Colour {
@@ -754,14 +755,14 @@ In Rust, it is possible to associate data and methods with the variants. It is p
 
 Enums can be used with generics and can implement functions and methods.
 ~~~
-enum DispernserItem {
+enum DispenserItem {
   Empty,
   Ammo(u8),
   Things(String, i32),
   Place {x: i32, y: i32},
 }
 
-impl DispernserItem {
+impl DispenserItem {
   fn display(&self) { }
 }
 
@@ -769,6 +770,28 @@ impl DispernserItem {
 enum Option<T> {
   Some(T),
   None,
+}
+~~~
+
+And enums can be used with structs as well
+~~~
+enum IpType{
+    V4(String),
+    V6(String),
+}
+
+struct IpAddress{
+    kind: IpAddrKind,
+    address: String,
+}
+
+fn main() {
+    let home = IpType::V4(String::from("127.0.0.1"));
+    
+    let loopack = IpAddress {
+        kind: IpType::V6,
+        adress: String::from("::1"),
+    }
 }
 ~~~
 
