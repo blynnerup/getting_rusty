@@ -912,6 +912,28 @@ fn file_open4() {
   }
 }
 ~~~
+## Generics
+Generics are types that will accept any type as parameter, meaning they're abstract standards for concrete types.
+~~~
+struct Point<T> { // This struct will accept any type as long as it is the same type for both x and y
+    x: T,
+    y: T,
+}
+
+struct AdvancedPoint<T, U> { // Here we can use two different types for the generic
+    x: T,
+    y: U
+}
+
+fn main() {
+    let coord = Point { x: 5.0, y: 6.2 } // For this variable the type is float
+    let coord2 = Point { x: 3, y: 8 0 } // For this variable the type is i32
+    
+    let advanced_coord = AdvancedPoint { x: 4, y: 3.5 } // x is a i32 and y is a float
+}
+~~~
+Generics are therefore placeholders until we fill them with concrete types.
+
 
 ## Closure
 A closure is an anonymous function that can borrow or capture some data from the scope it is nested in. The syntax is a parameter list between two pipes without type annotations, followed by a block.
