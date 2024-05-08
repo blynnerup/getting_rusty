@@ -17,6 +17,7 @@
       <sourceFolder url="file://$MODULE_DIR$/rust_basics/exercise_g/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust_basics/exercise_h/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/exercise_structs_lifetimes/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/exercise_enums/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/variables/target" />
       <excludeFolder url="file://$MODULE_DIR$/sandbox/target" />
       <excludeFolder url="file://$MODULE_DIR$/invaders/target" />

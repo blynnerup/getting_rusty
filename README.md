@@ -772,6 +772,13 @@ enum Option<T> {
   None,
 }
 ~~~
+### Option
+
+Option is a special type of enum and is used whenever something may be absent. A value can be checked if is _some_ or _none_ by using the dot operator `.is_some` or `.is_none`.
+Option implements the IntoIterator trait, so it can be treated like a vector of 0 or 1 items.
+
+The Option enum is important as it allows a value to be either something or nothing. The nothing aspect is comparable to null.
+Unlike in C# there is no _null_ value in Rust, so use the Option instead. You either have a value wrapped in the Some variant or you have _none_.
 
 And enums can be used with structs as well
 ~~~
@@ -794,14 +801,15 @@ fn main() {
     }
 }
 ~~~
-
-Unlike in C# there is no _null_ value, so use an Option instead. You either have a value wrapped in the Some variant or you have _none_.
 If you want to check for a single variant, you use the _if let_ expression, this is because enums can represent all sorts of data, therefore you need to use pattern matching.
 ~~~
 if let Some(x) = my_variable {
   println!("value is {}", x);
 }
 ~~~
+
+### Match
+
 In case you watch to match for all the variants use _match_.
 
 ~~~
@@ -814,7 +822,7 @@ match my_variable {
     },
 }
 ~~~
-The match expression requires that all possible match are covered, so the expression must be exhaustive. The underscore can be used for anything, so it can be used for a default or an any-else branch.
+The match expression requires that all possible matches are covered, so the expression must be exhaustive. This means that you match for all expected cases and then have a broader case catching the rest. The underscore can be used for anything, so it can be used for a default or an any-else branch.
 The match expression can check for all kinds of types, but all arms of the match must return the same type.
 
 ~~~
@@ -825,12 +833,8 @@ let x  = match my_variable { // my_variable must be a variable that supports enu
 ~~~
 If the return value isn't needed, you can leave out the semicolon after the final bracket. If you do use the return value, the semicolon must be there.
 
-### Option
-Option is used whenever something may be absent. A value can be checked if is _some_ or _none_ by using the dot operator `.is_some` or `.is_none`.
-Option implements the IntoIterator trait, so it can be treated like a vector of 0 or 1 items. 
-
 ### Result
-Result is used might have a useful result or might have an error.
+Result is used when an item might have a useful result or might have an error.
 The implementation of Result looks like this:
 ~~~
 #[must_use]
