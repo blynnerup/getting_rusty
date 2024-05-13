@@ -21,8 +21,7 @@ fn main() {
     call_overview(&map1);
     call_overview(&map2);
     
-    drop(map1);
-    call_overview(&map1);
+    drop(map1); // map1 is dropped here.. would automatically have been dropped by then end of the main function.
 }
 
 struct MyString <'a>{
