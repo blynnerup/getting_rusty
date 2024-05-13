@@ -90,7 +90,7 @@ fun main() {
 ## Memory Safety
 Rust ensures memory safety at compile time. It does this through the borrow system.
 This strikes a happy medium between garbage collection and memory access and control. You retain freedom to allocate memory, but Rust will deal with freeing memory.
-More on this in the Ownership section
+More on this in the Ownership section.
 
 
 ## Functions
@@ -342,11 +342,14 @@ str is a string slice and will often be seen as &str which is the _borrowed stri
 
 ## <a id="ownership"></a> Ownership
 Ownership is a unique feature in Rust, enabling memory safety while still being a systems programming language.
+The Rust compiler is going to verify that your program is free of memory safety errors, such as dangling pointers, double freeze, using uninitialized memory.
+This concept is what drives the Rust language, as it sought to eliminate some of the pitfalls of languages like c++, where memory handling sometimes becomes cause for runtime errors.
+
 There are three rules to ownership;
 
 1. Each value has an owner. There is no value or data in memory that does not have a variable that owns it.
 2. There is only one owner of a value. There is no shared ownership. Other variables may borrow a value.
-3. When the owner goes out of scope, the value gets dropped immediately.
+3. When the owner goes out of scope, the value gets dropped immediately (freeing of memory).
 
 In order to understand how ownership of a value can change, consider the following:
 
@@ -354,7 +357,7 @@ In order to understand how ownership of a value can change, consider the followi
 let s1 = String::from("abc");
 let s2 = s1;
 
-println!("{}", s1); // This results in an error seen below
+println!("{}", s1); // This results in the error seen below as ownership of the data from s1 has been passed to s2 and s1 in now uninitialized.
 
 error[E0382]: borrow of moved value: `s1`                                                                                                                                                                                                                                                                       
  --> src\main.rs:7:20
@@ -378,10 +381,23 @@ The reason behind this is because of memory safety. When s1 is created, a capaci
 When s2 created and is set equal to the value of s1, the pointer reference is then moved to s2, leaving s1 in the compilers eyes as an initialized variable. Because of the rule about only having one owner.
 If both variables could "own" the value, memory safety stops.
 
-Another important thing to understand is when Rust uses Copy and Clone. If both s1 and s2 were supposed to have the same value, s2 could have been initialized as such:
+Another point of memory allocation is knowing that variables of fixed size gets pushed onto the stack, whereas variables of varying size is placed on the heap.
+~~~
+let var = 1; // Gets pushed onto the steack as the type of var (i32) is of fixed size)
+let mut s = "string with growth potential".to_string(); // Is created on the heap as the String type is undefined in size and can grow and shrink depending on the value stored.
+~~~
+
+### Move, Copy and Clone
+Move is defined as moving ownership of data from one variable to another. This essentially happens everytime a variable is set equal to the value of another variable.
+This was illustrated in the example above where s2 was set equal to s1.\
+Another important thing to understand is when Rust uses Copy and Clone.
+If both s1 and s2 were supposed to have the same value, s2 could have been initialized as such:
 ~~~
 s2 = s1.clone();
 ~~~
+It is worth noting that clone can be an expensive operation. It is also worth noting that setting a value of a type already on the stack will do a copy and not a move.
+This means that that types like integers, booleans, float, char. A tuple can also have the copy _trait_ if every item in the tuple is already on the stack.
+
 When talking about values, Rust _clones_ heap data and pointer updates, but will _copy_ stack data. When a value is dropped Rust performs the following actions:
 1. Destructor is run (if one is present)
 2. The heap portion is immediately freed
@@ -415,7 +431,8 @@ This is however oftentimes not what you want, as the value passed to the functio
 For most other cases you would use references.
 
 ## References and Borrowing
-Instead of moving a variable, references can be used. To reference a value use _&_
+Instead of moving a variable, references can be used. To reference a value use _&_. A reference allows to pass that reference to a value without moving it to another variable.
+There are two types of references; shared and mutable. References default to an immutable value. However, if we make a mutable reference to a mutable value, then we can use the reference to change the value as well.
 
 ~~~
 let s1 = String::from("abc");
@@ -429,10 +446,38 @@ Once the function is finished, the reference to s1 gets dropped, not the value o
 When creating a reference, Rust creates a pointer to the value. However, unlike other low level languages like C, in Rust the word pointer is rarely used as Rust handles the creation and destruction of pointers for us.
 Rust also makes sure that these pointers are always valid using a concept called _Lifetimes_.
 
-_Lifetimes_ can be summed up as a rule stating that references must always be valid. This means that the compiler will not allow a value to outlive the reference to it.
-And you can never point to _null_.
+### Lifetime
 
-References default to an immutable value. However, if we make a mutable reference to a mutable value, then we can use the reference to change the value as well.
+_Lifetimes_ can be summed up as a rule stating that references must always be valid. This means that the compiler will not allow a value to outlive the reference to it.
+And you can never point to _null_. The mean idea behind this is to prevent dangling references. 
+
+It is possible to annotate lifetime for references. This does not change how long a reference will live, but it will help provide some rules that the code needs to live by.
+Lifetime annotation is done by a single tick '
+
+Consider the following
+~~~
+fn example<'a>(x: &'a str) -> &'a str {
+    // do stuff
+}
+~~~
+In this example, we say that the function takes a reference with the lifetime a which needs to live as long as the return str value from the function.
+
+An example of when lifetime references are import is seen below
+~~~
+struct MyString<'a> {
+    text: &'a str,
+}
+
+fn main() {
+    let str1 = String::from("This is my string");
+    let x = MyString{text: str1.as_str()};
+}
+~~~ 
+When we create the _MyString_ struct, we say that the _text_ field is a reference to a string. So when creating a new instance of _MyString as we do in the main function. We need to make sure that the lifetime of _str1_ does not outlive the lifetime of _x_, because then we would have a dangling reference.
+
+#### Static lifetime
+It is possible to have a static lifetime reference. This will make a reference live as long as the program is running. This can be useful for error messages, but while this can have some advantages, it is in general encouraged to consider if a static lifetime really is needed.\
+`let s: &'static str = "I have a static lifetime";`
 
 ~~~
 let mut s1 = String::from("abc"); // s1 created as mutable
@@ -485,10 +530,30 @@ You can have either;
 
 
 ## Structs
-As Rust follows many of the paradigms, Rust doesn't have classes, but structs.
+As Rust follows many of the paradigms of functional programming, Rust doesn't have classes, but structs.
 A Struct can have data fields, methods and associated functions. The syntax and implementation of a struct is as follows:
 
+Rust have three types of structs;
+1. A named field
+   - Gives a name to each component
+2. A tuple like
+   - Identifies them in the order in which they appear
+3. A unit like
+   - Has no components at all
+
+Base implementation of them are like follows
+
 ~~~
+// This is a unit like struct
+struct UnitStruct;
+// An example of a unit like struct is the Range part of a for loop 1..5 -> this is short for Range {start: 1, end: 5}
+
+// This is a tuple like struct
+struct Coordinates(i32, i32, i32);
+
+let coords = Coordinates(1,3,6);
+
+// This is a named field struct
 struct RedFox { // name of a struct is in captial camel case.
   enemy: bool,
   life: u8,
@@ -516,6 +581,34 @@ impl RedFox { // implement RedFox struct
 // In order to create a new RedFox, this is how
 
 let fox = RedFox::new();
+
+// Another example
+
+struch Square {
+    width: u32,
+    height: u32,
+}
+
+impl Square {
+    fn area(&self) -> u32 {
+        self.width * self.height
+    }
+    
+    fn return_width(&self) -> u32 {
+        self.width
+    }
+    
+    fn change_width(&mut self, new_width: u32) { // Need to add the mut to the reference of self, as it is n ow being updated
+        self.width = new_width
+    }
+}
+
+fn calc_square() {
+    let mut sq = Square { width: 5, height: 5 }; // Has to be mutable in order to allow the function change_width to make changes. Not needed for other operations.
+    println!("{}", sq.area()); // Prints out 25
+    println!("{}", sq.return_width()); // Prints out 5
+    sq.new_width(sq, 7);
+}
 ~~~~
 
 The scope operator in Rust is double colon (::), it is used to access part of namespace like things. It has been used before to access items inside modules.
@@ -642,7 +735,8 @@ let have_five = h.remove(&5).unwrap();
 Creating new pairs into the hashmap id done by the insert method. Removing from the hashmap is done by the remove method, which returns an enum called _Option_.
 
 ## Enums
-An enum is like an enum in C#
+Enum is short for enumeration, allows you to define a type by enumerating its possible variants.
+An enum is like an enum in C#, and created as such
 
 ~~~
 enum Colour {
@@ -661,14 +755,14 @@ In Rust, it is possible to associate data and methods with the variants. It is p
 
 Enums can be used with generics and can implement functions and methods.
 ~~~
-enum DispernserItem {
+enum DispenserItem {
   Empty,
   Ammo(u8),
   Things(String, i32),
   Place {x: i32, y: i32},
 }
 
-impl DispernserItem {
+impl DispenserItem {
   fn display(&self) { }
 }
 
@@ -678,14 +772,44 @@ enum Option<T> {
   None,
 }
 ~~~
+### Option
 
-Unlike in C# there is no _null_ value, so use an Option instead. You either have a value wrapped in the Some variant or you have _none_.
+Option is a special type of enum and is used whenever something may be absent. A value can be checked if is _some_ or _none_ by using the dot operator `.is_some` or `.is_none`.
+Option implements the IntoIterator trait, so it can be treated like a vector of 0 or 1 items.
+
+The Option enum is important as it allows a value to be either something or nothing. The nothing aspect is comparable to null.
+Unlike in C# there is no _null_ value in Rust, so use the Option instead. You either have a value wrapped in the Some variant or you have _none_.
+
+And enums can be used with structs as well
+~~~
+enum IpType{
+    V4(String),
+    V6(String),
+}
+
+struct IpAddress{
+    kind: IpAddrKind,
+    address: String,
+}
+
+fn main() {
+    let home = IpType::V4(String::from("127.0.0.1"));
+    
+    let loopack = IpAddress {
+        kind: IpType::V6,
+        adress: String::from("::1"),
+    }
+}
+~~~
 If you want to check for a single variant, you use the _if let_ expression, this is because enums can represent all sorts of data, therefore you need to use pattern matching.
 ~~~
 if let Some(x) = my_variable {
   println!("value is {}", x);
 }
 ~~~
+
+### Match
+
 In case you watch to match for all the variants use _match_.
 
 ~~~
@@ -698,7 +822,7 @@ match my_variable {
     },
 }
 ~~~
-The match expression requires that all possible match are covered, so the expression must be exhaustive. The underscore can be used for anything, so it can be used for a default or an any-else branch.
+The match expression requires that all possible matches are covered, so the expression must be exhaustive. This means that you match for all expected cases and then have a broader case catching the rest. The underscore can be used for anything, so it can be used for a default or an any-else branch.
 The match expression can check for all kinds of types, but all arms of the match must return the same type.
 
 ~~~
@@ -709,12 +833,8 @@ let x  = match my_variable { // my_variable must be a variable that supports enu
 ~~~
 If the return value isn't needed, you can leave out the semicolon after the final bracket. If you do use the return value, the semicolon must be there.
 
-### Option
-Option is used whenever something may be absent. A value can be checked if is _some_ or _none_ by using the dot operator `.is_some` or `.is_none`.
-Option implements the IntoIterator trait, so it can be treated like a vector of 0 or 1 items. 
-
 ### Result
-Result is used might have a useful result or might have an error.
+Result is used when an item might have a useful result or might have an error.
 The implementation of Result looks like this:
 ~~~
 #[must_use]
@@ -792,6 +912,28 @@ fn file_open4() {
   }
 }
 ~~~
+## Generics
+Generics are types that will accept any type as parameter, meaning they're abstract standards for concrete types.
+~~~
+struct Point<T> { // This struct will accept any type as long as it is the same type for both x and y
+    x: T,
+    y: T,
+}
+
+struct AdvancedPoint<T, U> { // Here we can use two different types for the generic
+    x: T,
+    y: U
+}
+
+fn main() {
+    let coord = Point { x: 5.0, y: 6.2 } // For this variable the type is float
+    let coord2 = Point { x: 3, y: 8 0 } // For this variable the type is i32
+    
+    let advanced_coord = AdvancedPoint { x: 4, y: 3.5 } // x is a i32 and y is a float
+}
+~~~
+Generics are therefore placeholders until we fill them with concrete types.
+
 
 ## Closure
 A closure is an anonymous function that can borrow or capture some data from the scope it is nested in. The syntax is a parameter list between two pipes without type annotations, followed by a block.
