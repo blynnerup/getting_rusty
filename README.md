@@ -628,6 +628,7 @@ impl RedFox {
 In Rust there is no inheritance for structs. Instead, Rust have _traits_.
 
 ## Traits
+A trait represents a capability, something a type can do, that can be shared with other types.
 Traits works like interfaces in other languages. Rust takes the composition over inheritance approach. 
 
 Traits define required behaviour. In other words, functions and methods that a struct must implement if it wants to have that trait.
@@ -668,7 +669,10 @@ fn main() {
 ~~~
 
 Traits can inherit from other traits. A struct implementing a trait with inheritance must also implement the trait methods from the parent traits.
-Also, traits can have default behaviors, so if design of traits are done carefully, you may not have to implement some of that trait at all.
+
+### Default behaviour
+
+Traits can have default behaviors, so if design of traits are done carefully, you may not have to implement some of that trait at all.
 
 ~~~
 trait Run {
@@ -693,6 +697,89 @@ fn main() {
 
 There cannot be set Fields in traits. The way around this is to implement getter and setter methods in the traits.
 
+A trait can be passed as a parameter as long as a type implements that trait.
+In the bottom of this example is shown how to call the call_overview function with generics.
+~~~
+trait Overview {
+    fn overview(&self) -> String {
+        String::from("This the overview message")
+    }
+}
+
+struct TacticalMap {
+    map_name: String,
+    map_id: i32,
+}
+
+struct SeaChart {
+    map_name: String,
+    map_id: i32,
+}
+
+impl Overview for TacticalMap {
+    fn overview(&self) -> String {
+        format!("{}, {}", self.map_name, self.map_id)
+    }
+}
+
+impl Overview for SeaChart { } // This results in the default behaviour being called
+
+fn main(){
+    let map1 = TacticalMap{ map_name: String::from("Braunsmark"), map_id: 23 }
+    let map2 = SeaChart { map_name: String::from("Veiled Sea"), map_id: 42 }
+    
+    call_overview(&map1);
+    call_overview(&map2);
+}
+
+fn call_overview(item: &impl Overview){
+    println!("Overview: {}", item.overview())
+}
+
+// These two function calls do the same thing, but with some key differences
+// fn call_overview(item1: &impl Overview, item2: &impl Overview) <- This allows for item1 and item2 to be of different types
+// fn call_overview<T: Overview>(item: &T, item2: &T) <- This requires item1 and item2 to be of the same type
+
+// This function allows for having a parameter with multiple trait bounds
+// fn call_overview(item: &impl Overview + AnotherTrait)
+~~~
+
+### Utility Traits
+These traits are a grabbag of various traits from the standard Rust library.
+
+#### Drop
+Drop handles the freeing of memory as when an element goes out of scope. This allows for even more tight memory management.
+After implementing the Drop trait, it is always run when the item goes out of scope and therefore we don't manually need to call it.
+~~~
+// using the data from the example above for abbreviation
+
+impl Drop for TacticalMap{
+    fn drop(&mut self){
+        println!("Dropping: {}", self.map_name)
+    }
+}
+
+// Continue of main function
+fn main() {
+    drop(map1); // This drops the map1 referene and the memory is freed.
+}
+~~~
+
+#### Clone
+The clone trait has been mentioned earlier, but here in more detail.\
+Clone is for types that can make copies of itself. In order for this to work, it needs to make an independent copy using the self keyword and then return it.
+Cloning values means allocating copies of anything it owns, which can make cloning a very memory heavy operation.
+
+#### Copy
+Simple types that does not own any values cannot implement the copy trait.
+
+#### From and Into
+From and into traits allows us to do conversions of one type and then into another.\
+From is defined as `fn into(self) -> T`, so takes self and return a value of type _T_.\
+Into is similar as defined as `fn from(T) -> self` takes a value of type _T_ and then returns self.\
+From is going to act as a generic constructor for when we're a producing an instance of a type from some other single value.
+There are also TryFrom and TryInto, which works as error catchers for the short trait names, which can be handy when for instance using from to convert an i64 to an i32 which would result in loss of bytes.
+The Try traits will produce a Result return type which will allows to handle any errors which would occur while doing conversions.
 
 ## Collections
 A rundown of some collections in the standard library.
