@@ -1089,3 +1089,23 @@ For instance printing a vector would look like this
 let nums = vec![1, 2, 3];  // Initialize a vector using the macro and litterals
 println!("{:?}", nums); // The ? tells the compiler to go into debug mode and the : pushes the items in the collection into the print statement, allowing us to print the contents of the vector
 ~~~
+
+## Organize code
+Writing bigger projects requires codes to be structured to avoid massive code files. In Rust code can be organized using _packages_, _crates_, _modules_ and _paths_.
+
+- Packages allow us to build, share and test crates.
+- Crates are a trio of modules that produces a library or an executable.
+- Modules allows for handling the organization, scope and privacy of _paths_.
+- Paths is a way of naming an item such as a struct, function or module.
+
+### Packages
+A package is a collection of crates which provides functionality. The package contains a cargo.toml file which contains information on how to build those crates.
+The .toml file contains information about dependencies and useful information about the package. The cargo new command creates a new package.
+During the creation a cargo.toml file is created alongside a _src_ directory. This directory is not mentioned in the toml file because of the convention that Cargo follows.
+Which is that src/main.rs is the crate root of the binary crate and src/library.rs defines a library crate.
+The crate allows for bundling related functionality together, which helps reusability.
+
+### Modles
+Where packages are about code sharing between projects, modules are about code sharing within a project. Modules are a collection of named features, like structs or functions.
+A module is created by using the `cargo new --lib` command.
+
