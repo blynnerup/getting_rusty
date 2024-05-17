@@ -122,40 +122,6 @@ Macro names looks like function names, but are always postfix with an exclamatio
 println!("{}", x); // println! is a macro
 ~~~
 
-## Module System
-You can create modules by specifying the path to the module. You can place a library file (lib.rs) in the root folder and use (import) it in the file.
-
-Consider the following; Using the hello project created in the beginning, it is possible to add a lib.rs file in to the source directory. In the lib.rs file a single method will be added _greet_
-
-~~~
-pub fn greet() {
-    println!("Hi!");
-}
-~~~
-All methods in a module are private by default. Adding the pub keyword to it, enables the method to be public and as such can be called from the main.rs file. Using the absolute path and then the function name.
-hello being the name of the project in toml file, the scope operator which is double colons and then the function name in the lib.rs, greet.
-~~~
-fn main() {
-    hello::greet();
-}
-~~~
-
-To prevent having to call the scope all the time, a _use_ statement can be added. This is like an import in Python or using in C#.
-
-~~~
-use hello::greet;
-
-fn main() {
-    greet();
-}
-~~~
-
-Rust comes with a standard library, which contains the most used methods. If you want to use a vector _use_ it at the top of the file.
-
-`use std::vec::Vec;`
-
-In case you need something outside the standard library, for this go to crates.io, this is the package collection for Rust.
-
 ## Scalar Types
 There are four scalar types in Rust
 - integer
@@ -1105,7 +1071,152 @@ During the creation a cargo.toml file is created alongside a _src_ directory. Th
 Which is that src/main.rs is the crate root of the binary crate and src/library.rs defines a library crate.
 The crate allows for bundling related functionality together, which helps reusability.
 
-### Modles
+### Modules
 Where packages are about code sharing between projects, modules are about code sharing within a project. Modules are a collection of named features, like structs or functions.
 A module is created by using the `cargo new --lib` command.
 
+You can create modules by specifying the path to the module. You can place a library file (lib.rs) in the root folder and use (import) it in the file.
+
+Consider the following; Using the hello project created in the beginning, it is possible to add a lib.rs file in to the source directory. In the lib.rs file a single method will be added _greet_
+
+~~~
+pub fn greet() {
+    println!("Hi!");
+}
+~~~
+All methods in a module are private by default. Adding the pub keyword to it, enables the method to be public and as such can be called from the main.rs file. Using the absolute path and then the function name.
+hello being the name of the project in toml file, the scope operator which is double colons and then the function name in the lib.rs, greet.
+~~~
+fn main() {
+    hello::greet();
+}
+~~~
+
+To prevent having to call the scope all the time, a _use_ statement can be added. This is like an import in Python or using in C#.
+
+~~~
+use hello::greet;
+
+fn main() {
+    greet();
+}
+~~~
+
+Rust comes with a standard library, which contains the most used methods. If you want to use a vector _use_ it at the top of the file.
+
+`use std::vec::Vec;`
+
+In case you need something outside the standard library, for this go to crates.io, this is the package collection for Rust.
+
+Below is a bigger module example:
+First create the module, this can be done from the terminal using `cargo new todo --lib` where _todo_ will be the name of the module or via the menu in Rust Rover and selecting from the dropdown "Library" instead of "Binary".
+This will create a new module with a cargo.toml file and a src folder with a lib.rs file in it.
+After that a module is created alongside some logic
+
+~~~
+mod list{ // Create module
+    pub struct Tasks { // public struct
+        pub item: String, // public field
+    }
+    
+    mod things_todo { // private module
+        fn add_activity() {} // with private fields
+        fn update_activity(){}
+        fn marked_complete(){}
+    }
+    
+    mod items_completed{
+        fn remove_task(){}
+        fn move_back_todo(){}
+    }
+}
+
+fn lets_add_task(){
+    let task = list::Tasks {item: String::from("Tasks")}; // this will work - creates a Tasks object
+    list::things_todo::add_activity(); // will cause a compile error as the module is private. Note both module and element within it needs the pub keyword in order to be public accessible.
+    list::items_completed::remvoe_task(); // relative path
+    create::list::items_completed::remove_task(); // absolute path as we start at the root crate
+}
+~~~
+
+#### Export
+In order to keep the libraries tidy and not clutter it with code as the project grows we can add exports to keep the code base tidy and structured.
+Working with the same example as above, we add a things_todo.rs file to the _src_ folder and call that from the code. This will tell Rust to look for that file in the src folder
+
+~~~
+// lib.rs file
+mod list{ // Create module
+    pub struct Tasks { // public struct
+        pub item: String, // public field
+    }
+    
+    mod items_completed{
+        fn remove_task(){}
+        fn move_back_todo(){}
+    }
+}
+
+// note that the things_todo has been removed
+
+mod things_todo; // Tells Rust to look for a file named that (and in that is our module with the same name)
+use crate::things_todo::add_activity // Shortnes the namespace so we can call only add_activity(); when wanting to use it
+
+fn lets_add_task(){
+    let task = list::Tasks {item: String::from("Tasks")}; 
+    add_activity(); // Because of the module and use statement, the absolute and relative paths are now identical
+}
+
+// things_todo.rs file
+pub fn add_activity() {} 
+fn update_activity(){}
+fn marked_complete(){}
+~~~
+
+#### Nested modules
+Nested modules are declared in the module file and Rust will search for them in the tree structure.\
+First we crate a things_todo folder and in that we'll create a items_completed.rs file and move the items_completed module into that file.
+
+~~~
+// lib.rs file
+mod things_todo;
+use crate::things_todo::{add_activity, items_completed, items_completed::test::test}; // method in things things_todo, submodule and sub-submodule from the items_completed file
+
+mod list{
+    pub struct Tasks {
+        pub item: String,
+    }
+}
+
+fn lets_add_task(){
+    let task = list::Tasks {item: String::from("Tasks")};
+    add_activity();
+    items_completed::remove_task();
+    
+// items_completed.rs file (located in the same name folder, subfolder to the things_todo folder)
+pub fn remove_task(){}
+fn move_back_todo(){}
+
+pub mod test{
+    pub  fn test(){}
+}
+~~~
+
+If the cargo-modules is installed, the console can generate a tree structure to visualize the structure of modules / files.
+
+~~~
+cargo-modules structure --package todo
+
+crate todo
+├── fn lets_add_task: pub(crate)
+├── mod list: pub(crate)
+│   └── struct Tasks: pub
+└── mod things_todo: pub(crate)
+    ├── fn add_activity: pub
+    ├── mod items_completed: pub
+    │   ├── fn move_back_todo: pub(self)
+    │   ├── fn remove_task: pub
+    │   └── mod test: pub
+    │       └── fn test: pub
+    ├── fn marked_complete: pub(self)
+    └── fn update_activity: pub(self)
+~~~
