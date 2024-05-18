@@ -775,6 +775,45 @@ Vectors can be created from literals by using the macro _vec!_
 
 `let mut v = vec![2, 4, 6];`
 
+#### Standard methods within Vector
+
+~~~
+fn main(){
+    let mut nums: Vec<i32> = vec![]M;
+    
+    nums.push(1); // push adds elements to the top of the vector
+    nums.push(2);
+    nums.push(3);
+    
+    // pop will remove from the top -> Last in first out (Lifo)
+    let val = nums.pop(); // This returns a Option<T>, either Some or None
+    
+    // It is possible to index into a vector
+    let index_val = nums[1]; // This results in a copy
+    // The above line is available because i32 implements copy
+    // If the types of the items in the vector does not implement copy, we index with a reference
+    // let index_ref_val = &nums[1];
+    
+    // It is possible to return the first element in a vector by using .first()
+    let first_val = nums.first(); // Returns Option<T>, None if vector is empty, otherwise Some<T>
+    
+    // It's also contains a .last() method to get the last element of the vector
+    // .first_mut and .last_mut borrows a mutable reference
+    
+    // Values can be inserted and removed from a vector by index, insert will move any elements after the given index down the vector (add 1 to the index of that element)
+    nums.insert(0, 10); // Inserts 10 at indenx 0
+    nums.insert(3, 12);
+    nums.insert(2, 25);
+    
+    nums.remove(3); // Removes at index 3   
+    
+    nums.sort(); // Sorts the vector acending
+    nums.reverse(); // Sorts the vector decending
+    
+}
+
+~~~
+
 ### HashMap - HashMap<K, V>
 The _HashMap_ is a generic collection where you specify a type for the key, and one for the value and can index into the hashmap values by looking up the key.
 This is a Dictionary in C#.

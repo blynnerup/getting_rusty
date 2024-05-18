@@ -1,4 +1,4 @@
-workspace = { members = ["basics", "exercise_basics", "exercise_enums", "exercise_ownership", "exercise_structs_lifetimes", "exercise_traits_generics", "sandbox", "todo"] }
+workspace = { members = ["basics", "exercise_basics", "exercise_enums", "exercise_ownership", "exercise_structs_lifetimes", "exercise_traits_generics", "sandbox", "todo", "vectors_and_methods"] }
 [package]
 name = "even_more_rusty"
 version = "0.1.0"
