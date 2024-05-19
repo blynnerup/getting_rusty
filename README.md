@@ -814,18 +814,6 @@ fn main(){
 
 ~~~
 
-### HashMap - HashMap<K, V>
-The _HashMap_ is a generic collection where you specify a type for the key, and one for the value and can index into the hashmap values by looking up the key.
-This is a Dictionary in C#.
-Creating a hashmap is done like so
-~~~
-let mut h: HashMap<u8, bool> = HashMap::new();
-
-h.insert(5, true);
-let have_five = h.remove(&5).unwrap();
-~~~
-Creating new pairs into the hashmap id done by the insert method. Removing from the hashmap is done by the remove method, which returns an enum called _Option_.
-
 ## Enums
 Enum is short for enumeration, allows you to define a type by enumerating its possible variants.
 An enum is like an enum in C#, and created as such
@@ -1291,3 +1279,45 @@ fn main() {
 ~~~
 
 The binary heap is useful in collections where we care about order.
+
+## Maps
+Maps are a collection of key pair values, in which a value can be looked up using the key. \
+There are two kinds of maps in Rust, binary tree map and hash map. The key difference between the two keep entries arranged for lookup.
+Hash maps are stored in a single heap allocated table, whereas binary trees are stored in a treelike structure, which branches off into many leaves also known as nodes.
+Binary tree maps and hash maps are similar in the way they operate.
+~~~
+use std::collections::HashMap;
+
+fn main() {
+    let mut map = HashMap::new();
+    
+    map.insert("one", 1);
+    map.insert("two", 2);
+    map.insert("three", 3);
+    
+    println!("{:?}", map); // Prints {"two": 2, "three": 3, "one": 1}
+}
+~~~
+
+### HashMap - HashMap<K, V>
+The _HashMap_ is a generic collection where you specify a type for the key, and one for the value and can index into the hashmap values by looking up the key.
+This is a Dictionary in C#.
+Creating a hashmap is done like so
+~~~
+let mut h: HashMap<u8, bool> = HashMap::new();
+
+h.insert(5, true);
+let have_five = h.remove(&5).unwrap();
+~~~
+Creating new pairs into the hashmap id done by the insert method. Removing from the hashmap is done by the remove method, which returns an _Option_. Using the _get();_ method will also get the value of the key passed as an argument, but will not _remove_ it from the collection.
+As keys are unique, inserting with an already used key will result in the value of the existing key being overwritten with the new value and the old value being returned as an Option.
+
+It is possible to check is a key is present in the map using _contains_key();_ method, which takes a reference to a key as argument.
+Using the first example
+
+~~~
+println!("{}", map.contains_key(&"two"); // Prints true
+// In addition to remove, remove_entry can be used in order to get both key and value
+let kv = map.remove_entry(&"three");
+println!("{:?0}", kv); // Prints Some(("three", 3))
+~~~
