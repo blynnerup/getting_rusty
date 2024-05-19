@@ -21,6 +21,7 @@
       <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/exercise_traits_generics/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/todo/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/vectors_and_methods/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/binary_heap/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/variables/target" />
       <excludeFolder url="file://$MODULE_DIR$/sandbox/target" />
       <excludeFolder url="file://$MODULE_DIR$/invaders/target" />
