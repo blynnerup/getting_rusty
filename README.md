@@ -1340,3 +1340,43 @@ let mut bt_map = BTreeMap::new();
     
     println!("{}", bt_map.contains_key(&6)); // Prints true
 ~~~
+
+## Sets
+A set is a collection which allows for quickly checking if a value exists. A set cannot contain multiple copies of the same value.\
+Sets and maps are similar, but a set only contains keys and no values. Like with maps Rusts uses two kinds of sets, the HashSet and the BTreeSet, and work in a similar way to the maps (similar methods for them).
+But sets also contains new methods, such as intersection to check which values are present in different sets.
+
+### Intersection
+~~~
+fn main() {
+    let mut hs1 = HashSet::new();
+    
+    hs1.insert(1);
+    hs1.insert(2);
+    hs1.insert(3);
+    
+    let mut hs2 = HashSet::new();
+    
+    hs2.insert(1);
+    hs2.insert(3);
+    hs2.insert(5);
+    
+    // Insersecting values
+    for x in hs1.insertsection(&hs2) {
+        println!("Intersection {}", x); // Prints "Intersection: 1" and "Intersection: 3" on two lines.
+    }
+    
+    // Short hand way using the binary bitwise and operator
+    let intersection = &hs1 & &hs2;
+    
+    for y in intersection {
+        println!("Short hand way: {}", x);
+    }    
+}
+~~~
+
+### Union
+In a similar way a method _union_ can be used to find a value in either hs1 or hs2 `let union = &hs1 | &hs2;`, multiple identical values will be listed only once.
+
+### Difference
+This will return the values that are not in common, ie. values unique to either set `let diff = &hs1 - hs2;`
