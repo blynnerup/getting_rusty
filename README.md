@@ -913,85 +913,6 @@ let x  = match my_variable { // my_variable must be a variable that supports enu
 ~~~
 If the return value isn't needed, you can leave out the semicolon after the final bracket. If you do use the return value, the semicolon must be there.
 
-### Result
-Result is used when an item might have a useful result or might have an error.
-The implementation of Result looks like this:
-~~~
-#[must_use]
-enum Result<T, E> {
-  Ok(T),
-  Err(E),
-}
-~~~
-Both Ok and Err are wrapped by generics, but are independent of each other. The must_use annotation makes it a compiler warning to silently drop a result.
-Rust encourages to handle all possible errors and will throw a warning if a Result is being dropped without handle.
-
-~~~
-fn load_file() {
-    File::open("Text for phone.txt");
-}
-
-// Running this produces the following warnings
-warning: function `load_file` is never used                                                                                                                                                                                                                                                                     
-  --> src\main.rs:39:4
-   |
-39 | fn load_file() {
-   |    ^^^^^^^^^
-   |
-   = note: `#[warn(dead_code)]` on by default
-
-warning: unused `Result` that must be used                                                                                                                                                                                                                                                                      
-  --> src\main.rs:40:5
-   |
-40 |     File::open("Text for phone.txt");
-   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   |
-   = note: this `Result` may be an `Err` variant, which should be handled
-   = note: `#[warn(unused_must_use)]` on by default
-help: use `let _ = ...` to ignore the resulting value
-   |
-40 |     let _ = File::open("Text for phone.txt");
-   |     +++++++
-
-warning: `sandbox` (bin "sandbox") generated 2 warnings                                                                                                                                                                                                                                                         
-    Finished dev [unoptimized + debuginfo] target(s) in 1.85s
-     Running `target\debug\sandbox.exe`
-
-~~~
-
-In the above example we get a warning as the file open operation might throw an error, and we should handle that situation.
-So in order to get rid of the warning, lets consume the Result and produce some output it.
-
-~~~
-// This will provide a file struct if the result is Ok, otherwise it will crash.
-fn file_open() {
-  let res = File::open("foo");
-  let f =  res.unwrap(); 
-}
-
-// This will do the same as above, but in case of a crash it will also print the content of the expect ()
-fn file_open2() {
-  let res = File::open("foo");
-  let f = res.expect("error message");
-}
-
-// This prevents the crash by first checking if the Result is ok
-fn file_open3() {
-  let res = File::open("foo");
-  if res.is_ok() {
-    let f = res.unwrap();
-  }
-}
-
-// Opening file by pattern matching
-fn file_open4() {
-  let res = File::open("foo");
-  match res {
-    Ok(f) => { /* do stuff with the file struct */ }
-    Err(e) => { /* do stuff if the file open fails and produces an error */ }
-  }
-}
-~~~
 ## Generics
 Generics are types that will accept any type as parameter, meaning they're abstract standards for concrete types.
 ~~~
@@ -1391,3 +1312,142 @@ Once the current function has been unwounded it moves on to whatever function ca
 The other behaviour that panicking can have, which is called _abort_. This would happen if we have a custom drop method, which also causes a panic during the unwinding process. This is considered fatal and thus will cause the whole process to stop.
 In either case the program terminates.
 
+### Recoverable errors (Result)
+Result is an enum and is used when an item might have a useful result or might have an error.
+The implementation of Result looks like this:
+~~~
+#[must_use]
+enum Result<T, E> {
+  Ok(T),
+  Err(E),
+}
+~~~
+Both Ok and Err are wrapped by generics, but are independent of each other. The must_use annotation makes it a compiler warning to silently drop a result.
+Rust encourages to handle all possible errors and will throw a warning if a Result is being dropped without handle.
+
+~~~
+fn load_file() {
+    File::open("Text for phone.txt");
+}
+
+// Running this produces the following warnings
+warning: function `load_file` is never used                                                                                                                                                                                                                                                                     
+  --> src\main.rs:39:4
+   |
+39 | fn load_file() {
+   |    ^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: unused `Result` that must be used                                                                                                                                                                                                                                                                      
+  --> src\main.rs:40:5
+   |
+40 |     File::open("Text for phone.txt");
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: this `Result` may be an `Err` variant, which should be handled
+   = note: `#[warn(unused_must_use)]` on by default
+help: use `let _ = ...` to ignore the resulting value
+   |
+40 |     let _ = File::open("Text for phone.txt");
+   |     +++++++
+
+warning: `sandbox` (bin "sandbox") generated 2 warnings                                                                                                                                                                                                                                                         
+    Finished dev [unoptimized + debuginfo] target(s) in 1.85s
+     Running `target\debug\sandbox.exe`
+
+~~~
+
+In the above example we get a warning as the file open operation might throw an error, and we should handle that situation.
+So in order to get rid of the warning, lets consume the Result and produce some output it.
+
+~~~
+// This will provide a file struct if the result is Ok, otherwise it will crash.
+fn file_open() {
+  let res = File::open("foo");
+  let f =  res.unwrap(); 
+}
+
+// This will do the same as above, but in case of a crash it will also print the content of the expect ()
+fn file_open2() {
+  let res = File::open("foo");
+  let f = res.expect("error message");
+}
+
+// This prevents the crash by first checking if the Result is ok
+fn file_open3() {
+  let res = File::open("foo");
+  if res.is_ok() {
+    let f = res.unwrap();
+  }
+}
+
+// Opening file by pattern matching
+fn file_open4() {
+  let res = File::open("foo");
+  match res {
+    Ok(f) => res /* do stuff with the file struct */
+    Err(e) => panic!("Error: {:?}", e), /* do stuff if the file open fails and produces an error */ 
+  };
+}
+~~~
+The match example above can be extended to also contain another match, which will attempt to match on the kind of error being thrown.\
+~~~
+use std::fs::File;
+use std::io::ErrorKind;
+...
+// Opening file by pattern matching
+fn file_open4() {
+  let res = File::open("foo");
+  match res {
+    Ok(f) => res /* do stuff with the file struct */
+    Err(e) => match e.kind() { // Match on error type
+        ErrorKind::NotFound => match File::create("error.txt") { // Create an error.txt file in case we fail 
+            OK(file_created) => file_created, // error.txt file created
+            Err(err) => panic!("Cannot create the file!"), // Unable to create error.txt
+        }
+        _ => panic!("Unexpected error kind"), // Match catch on everything else
+    } 
+  };
+}
+
+fn file_open5() {
+    let file = File::open("error.txt").unwrap(); // 
+}
+~~~
+Using the unwrap method if we get an Ok, unwrap will return the content of the Ok Result. But if Result is an error, unwrap will call panic! for us.
+We can also use the expect method in order to customize the error message in case we know something will fail.
+~~~
+fn file_open6() {
+    let file = File::open("error2.txt").expect("File was not found, panic!");
+}
+~~~
+
+### Error propagation
+In order to make an error return to the caller we use the _?_ operator.
+~~~
+use std::fs::File;
+use std::fs::rename;
+use std::io::ErrorKind;
+use std::io::Error;
+
+fn main() {
+    let test = open_file();
+    test.unwrap(); // This will unwrap the error we get from the open_file method as the file is not found.
+}
+
+fn open_file() -> Return<File, Error> { // Return either File or Error
+    let file = File::open("file_not_found.txt")?; // The ? allows the error to be propagated back to the calling methods
+    Ok(file);
+}
+
+fn rename_file() -> Result<(), Error> { // Return empty generic or Error
+    let file = rename("file_not_found.txt", "renamed_file_not_found.txt")?;
+    Ok(file);
+}
+~~~
+As a final remark on error handling. The ? operator should not be used in the main method, as there will be nowhere to propagate the error. 
+In the main method, use expect to finally handle whatever error has been propagated.
+
+
+## Testing
