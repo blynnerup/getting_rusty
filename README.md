@@ -1380,3 +1380,14 @@ In a similar way a method _union_ can be used to find a value in either hs1 or h
 
 ### Difference
 This will return the values that are not in common, ie. values unique to either set `let diff = &hs1 - hs2;`
+
+## Errors
+Rust groups errors into two groups, recoverable and unrecoverable. Recoverable errors relies on the _Result_ type and unrecoverable uses the _Panic_ macro.
+
+### Panic
+The panic macro will terminate the current thread, the panic macro looks like this `panic!();` Out of bounds access will cause a panic as Rust have no way of recovering from that.
+When a thread panics the default methods for handling that is using _unwinding_. Rust will recursively go through all data (variables, function arguments ect.) related to the current thread and drop all data.
+Once the current function has been unwounded it moves on to whatever function called the function and starts unwinding that. If the thread was the main thread, the whole process terminates.\
+The other behaviour that panicking can have, which is called _abort_. This would happen if we have a custom drop method, which also causes a panic during the unwinding process. This is considered fatal and thus will cause the whole process to stop.
+In either case the program terminates.
+
