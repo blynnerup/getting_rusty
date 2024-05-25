@@ -1460,6 +1460,49 @@ mod tests { // Crete tests module
         let result = 2 + 2;
         assert_eq!(result, 4); // Assert macro -> produces the test
     }
+    
+    #[test]
+    fn if_fails() {
+        panic!("TEST FAILED!")
+    }
 }
 ~~~
-To run this we type `cargo test` in the console.
+To run this we type `cargo test` in the console, and it will print
+~~~
+running 2 tests
+test tests::if_fails ... FAILED
+test tests::it_works ... ok
+
+failures:
+
+---- tests::if_fails stdout ----
+thread 'tests::if_fails' panicked at testing\src\lib.rs:17:9:
+TEST FAILED!
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+~~~
+
+In order to call a test outside the main function we need to use _super_
+
+~~~
+#[cfg(test)]
+mod tests {
+    use super::*; // super -> go outside these brackets and * -> everything
+...
+
+    #[test]
+    fn call_simple_add() {
+        assert!(simple_add())
+    }
+}   
+
+fn simple_add() -> bool {
+    if 2 + 2 == 4 { true }
+    else { false }
+}
+
+~~~
+
+In case we don't want a test to run we can import ignore `#[ignore]` above the test method.\
+If there is a test case that is expected to panic the `#[should_panic]` import can be used.\
+When calling cargo test it is possible to give a subset of the test as parameter to only test parts of the test file. `cargo test it` <- this will test all tests beginning with it.
