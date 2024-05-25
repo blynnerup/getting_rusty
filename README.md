@@ -1449,5 +1449,17 @@ fn rename_file() -> Result<(), Error> { // Return empty generic or Error
 As a final remark on error handling. The ? operator should not be used in the main method, as there will be nowhere to propagate the error. 
 In the main method, use expect to finally handle whatever error has been propagated.
 
-
 ## Testing
+Testing in Rust is simple and can be done like the following:
+~~~
+// This will be created in its own library directory and wrote this code in the lib.rs 
+#[cfg(test)] // This tells Rust to only include the following if given a certain configuration option
+mod tests { // Crete tests module
+    #[test] // Tells the compiler that the following function is a test
+    fn it_works() {
+        let result = 2 + 2;
+        assert_eq!(result, 4); // Assert macro -> produces the test
+    }
+}
+~~~
+To run this we type `cargo test` in the console.

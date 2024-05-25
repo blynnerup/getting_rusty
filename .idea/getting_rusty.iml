@@ -23,6 +23,7 @@
       <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/vectors_and_methods/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/binary_heap/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/maps/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/testing/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/variables/target" />
       <excludeFolder url="file://$MODULE_DIR$/sandbox/target" />
       <excludeFolder url="file://$MODULE_DIR$/invaders/target" />
