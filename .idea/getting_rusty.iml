@@ -24,6 +24,7 @@
       <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/binary_heap/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/maps/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/even_more_rusty/testing/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cli_find_and_replace/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/variables/target" />
       <excludeFolder url="file://$MODULE_DIR$/sandbox/target" />
       <excludeFolder url="file://$MODULE_DIR$/invaders/target" />
@@ -34,6 +35,7 @@
       <excludeFolder url="file://$MODULE_DIR$/rust_basics/exercise_f/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust_basics/exercise_g/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust_basics/exercise_h/target" />
+      <excludeFolder url="file://$MODULE_DIR$/cli_find_and_replace/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
