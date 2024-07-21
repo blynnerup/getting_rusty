@@ -975,6 +975,13 @@ v.iter() // Creates an iterator for the closure
   .fold(0, |acc, x| acc + x); // Add the values of the remaining items together
 ~~~
 
+As a final note, closures can infer its type based on the types the compiler encounters. It will always infer the first type encountered.
+~~~
+let exaple = |x| x; // Return x - type unknown at this point
+let string = example(String::from("string")); // Compiler infers the type as string, example will henceforth expect strings
+let num = example(2); // This results in an error as the compiler cannot infer a new type.
+~~~
+
 ## Threads
 In order to do threading in Rust, we must use the std::thread module. After that we can spawn a new thread and let that do work while the rest of the program continues.
 Also consider when to use threads and when to use async, whichever yields the best performance for the required task. A thread::spawn takes a closure as an argument.
